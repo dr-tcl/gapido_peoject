@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  grpc_app:
+    build: .
+    container_name: grpc_auth_app
+    ports:
+      - "50051:50051"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    volumes:
+      - .:/code
+
+  worker:
+    build: .
+    container_name: grpc_sms_worker
+    command: python -m app.worker
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+      - rabbitmq
+    volumes:
+      - .:/code
+
+    restart: always
+
+  mongo:
+    image: mongo:7
+    container_name: grpc_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: grpc_redis
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: grpc_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  mongo_data:

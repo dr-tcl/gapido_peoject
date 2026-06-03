@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthService {
+  rpc SendOTP (SendOTPRequest) returns (MessageResponse);
+  rpc VerifyOTP (VerifyOTPRequest) returns (AuthTokensResponse);
+  rpc RefreshToken (RefreshTokenRequest) returns (AuthTokensResponse);
+
+  rpc PublicAccess (Empty) returns (MessageResponse);
+  rpc UserAccess (Empty) returns (MessageResponse);
+  rpc AdminAccess (Empty) returns (MessageResponse);
+}
+
+message Empty {}
+
+message SendOTPRequest {
+  string phone = 1;
+}
+
+message VerifyOTPRequest {
+  string phone = 1;
+  string code = 2;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message MessageResponse {
+  string message = 1;
+}
+
+message AuthTokensResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
